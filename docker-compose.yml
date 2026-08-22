@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: products-api-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Your_password123!"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"Your_password123!\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - products-api-net
+
+  api:
+    build:
+      context: .
+      dockerfile: src/API/Dockerfile
+    container_name: products-api
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Docker"
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=ProductsDb;User Id=sa;Password=Your_password123!;TrustServerCertificate=True;"
+      Jwt__Secret: "CHANGE_ME_SUPER_SECRET_KEY_FOR_JWT_SIGNING_32B+"
+      Jwt__Issuer: "ProductsApi"
+      Jwt__Audience: "ProductsApiClient"
+    ports:
+      - "8080:8080"
+    networks:
+      - products-api-net
+
+volumes:
+  sqlserver-data:
+
+networks:
+  products-api-net:
+    driver: bridge

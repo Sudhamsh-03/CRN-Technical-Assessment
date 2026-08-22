@@ -1,0 +1,47 @@
+## .NET
+bin/
+obj/
+out/
+*.user
+*.suo
+.vs/
+.vscode/
+*.userosscache
+*.sln.docstates
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ll]og/
+[Ll]ogs/
+
+## Test results
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+
+## Rider / VS
+.idea/
+*.DotSettings.user
+
+## Env / secrets
+*.env
+.env
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+## macOS / Windows junk
+.DS_Store
+Thumbs.db
+
+## Docker
+docker-compose.override.yml
+
+## Claude Code local state
+.claude/
+
